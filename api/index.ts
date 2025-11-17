@@ -1,8 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 // !! THIS IS THE FIX !!
 // We are using the new alias, not a relative path.
-import { registerRoutes } from "@server/routes";
-import { log } from "@server/vite";
+import { registerRoutes } from "../server/routes";
+import { log } from "../server/vite";
 
 // This is in the correct top-level scope
 declare module 'http' {
