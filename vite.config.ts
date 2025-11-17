@@ -11,12 +11,12 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      // This is the alias for your components
       "@": path.resolve(import.meta.dirname, "client/src"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
       
-      // !! THIS IS THE FIX !!
-      // This adds the missing alias for your images
-      "@assets": path.resolve(import.meta.dirname, "attached_assets")
+      // !! THIS IS THE FINAL FIX !!
+      // This tells Vite what '@server' means.
+      "@server": path.resolve(import.meta.dirname, "server")
     },
   },
 
