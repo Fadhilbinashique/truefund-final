@@ -7,21 +7,21 @@ export default defineConfig({
     react()
   ],
   
-  // This tells Vite that your frontend code is in the "client" folder
-  // Your screenshot (235104.png) confirms this is correct.
-  root: "client", 
+  root: "client", // This is correct
 
   resolve: {
     alias: {
-      // This helps your app find files (e.g., "@" means "client/src")
+      // This is the alias for your components
       "@": path.resolve(import.meta.dirname, "client/src"),
+      
+      // !! THIS IS THE FIX !!
+      // This adds the missing alias for your images
+      "@assets": path.resolve(import.meta.dirname, "attached_assets")
     },
   },
 
   build: {
-    // This tells Vite where to put the finished website.
-    // It will put it in a "dist" folder at the top level (outside "client").
-    outDir: "../dist",
+    outDir: "../dist", // This is correct
     emptyOutDir: true,
   },
 });
