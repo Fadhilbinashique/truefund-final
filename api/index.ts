@@ -1,7 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
-// We fix the import paths to go "up one level" to the root
-import { registerRoutes } from "../server/routes";
-import { log } from "../server/vite";
+// FIX 1: Removed '/server' from the paths
+import { registerRoutes } from "../routes";
+import { log } from "../vite";
+
+// FIX 2: Moved this type declaration to the top level
+declare module 'http' {
+  interface IncomingMessage {
+    rawBody: unknown
+  }
+}
 
 // This will be our cached Express app
 let app: express.Express | null = null;
@@ -16,11 +23,7 @@ async function setupApp() {
   // Create the app and all your middleware
   const newApp = express();
 
-  declare module 'http' {
-    interface IncomingMessage {
-      rawBody: unknown
-    }
-  }
+  // This will now work correctly
   newApp.use(express.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
@@ -61,7 +64,7 @@ async function setupApp() {
   await registerRoutes(newApp);
 
   // Add your error handler
-  newApp.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  newApp.use((err: any, _req: Request, res: Response, _next: NextFunction)s => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
