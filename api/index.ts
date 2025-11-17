@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
-// These paths are correct
-import { registerRoutes } from "../routes";
-import { log } from "../vite";
+// !! THIS IS THE FIX !!
+// The files are still in the 'server' folder, so we point there.
+import { registerRoutes } from "../server/routes";
+import { log } from "../server/vite";
 
 // This is in the correct top-level scope
 declare module 'http' {
@@ -60,8 +61,7 @@ async function setupApp() {
   // Register all your API routes
   await registerRoutes(newApp);
 
-  // !! THIS IS THE FIX !!
-  // The error handler is now syntactically correct (no extra 's')
+  // The error handler (no typos)
   newApp.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
