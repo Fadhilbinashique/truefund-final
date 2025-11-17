@@ -1,9 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
-// FIX 1: Removed '/server' from the paths
+// These paths are correct
 import { registerRoutes } from "../routes";
 import { log } from "../vite";
 
-// FIX 2: Moved this type declaration to the top level
+// This is in the correct top-level scope
 declare module 'http' {
   interface IncomingMessage {
     rawBody: unknown
@@ -15,15 +15,12 @@ let app: express.Express | null = null;
 
 // This async function sets up our app one time
 async function setupApp() {
-  // If the app is already set up, just return it
   if (app) {
     return app;
   }
 
-  // Create the app and all your middleware
   const newApp = express();
 
-  // This will now work correctly
   newApp.use(express.json({
     verify: (req, _res, buf) => {
       req.rawBody = buf;
@@ -31,7 +28,7 @@ async function setupApp() {
   }));
   newApp.use(express.urlencoded({ extended: false }));
 
-  // Your custom logging middleware
+  // Logging middleware
   newApp.use((req, res, next) => {
     const start = Date.now();
     const path = req.path;
@@ -60,11 +57,12 @@ async function setupApp() {
     next();
   });
 
-  // We call your async function to add all API routes
+  // Register all your API routes
   await registerRoutes(newApp);
 
-  // Add your error handler
-  newApp.use((err: any, _req: Request, res: Response, _next: NextFunction)s => {
+  // !! THIS IS THE FIX !!
+  // The error handler is now syntactically correct (no extra 's')
+  newApp.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
@@ -78,8 +76,6 @@ async function setupApp() {
 
 // This is the function Vercel will call on every API request
 export default async function handler(req: Request, res: Response) {
-  // It waits for the app to be set up (if it's the first request)
-  // Then, it passes the request to your Express app
   const expressApp = await setupApp();
   return expressApp(req, res);
 }
