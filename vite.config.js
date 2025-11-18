@@ -1,19 +1,24 @@
 // vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
-  // The folder that contains index.html / src for the frontend
-  root: "client",
-
-  // Make assets use relative URLs (helps deployment)
-  base: "./",
-
+  root: path.resolve(__dirname, "client"), // client has index.html + src
+  base: "./",                               // use relative asset paths
   plugins: [react()],
-
-  // Build into the top-level dist/ folder so Vercel serves it
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "client", "src"),
+      "@shared": path.resolve(__dirname, "shared"),
+      "@server": path.resolve(__dirname, "server") // if you need it
+    }
+  },
   build: {
-    outDir: "../dist",   // write dist next to the repo root
-    emptyOutDir: true
+    outDir: path.resolve(__dirname, "dist"), // output to repo-root/dist
+    emptyOutDir: true,
+    rollupOptions: {
+      input: path.resolve(__dirname, "client", "index.html")
+    }
   }
 });
